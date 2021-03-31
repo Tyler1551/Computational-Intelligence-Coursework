@@ -1,5 +1,6 @@
 package coursework;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -131,22 +132,100 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 
 
 //	Tournament Selection
+//	private Individual select(){
+//		Individual parent1 = population.get(Parameters.random.nextInt(Parameters.popSize));
+//		Individual parent2 = population.get(Parameters.random.nextInt(Parameters.popSize));
+//
+//		if(parent1 == parent2){
+//			parent2 = population.get(Parameters.random.nextInt(Parameters.popSize));
+//		}
+//
+//		if(parent1.fitness > parent2.fitness){
+//			return parent1.copy();
+//		}
+//		else{
+//			return parent2;
+//		}
+//
+//	}
+
+//	Roulette selection
+
+
 	private Individual select(){
-		Individual parent1 = population.get(Parameters.random.nextInt(Parameters.popSize));
-		Individual parent2 = population.get(Parameters.random.nextInt(Parameters.popSize));
+		Individual parent2 = new Individual();
 
-		if(parent1 == parent2){
-			parent2 = population.get(Parameters.random.nextInt(Parameters.popSize));
+
+
+//
+		ArrayList<Double> cumulativeProportions = new ArrayList<>();
+
+
+
+		double sum = 0;
+		ArrayList<Double> proportions = new ArrayList<>();
+		double proportion_sum;
+		double normalisedProportions;
+
+		for(Individual parent : population){
+			sum += parent.fitness;
 		}
 
-		if(parent1.fitness > parent2.fitness){
-			return parent1.copy();
+		for(int i = 0; i < population.size(); i++){
+			proportions.set(i, sum / fitness);
 		}
-		else{
-			return parent2;
-		}
+
+
+		double cumulativeTotal = 0.0;
+
+
+
+//
+
+		return parent2;
 
 	}
+
+
+//	private Individual select(){
+//
+////		set new collection of fitness values
+//		ArrayList<Double> fitnessValues = new ArrayList<>();
+//		ArrayList<Double> fitnessProportions = new ArrayList<>();
+//		double fitnessSum = 0;
+//
+//
+//
+////		Add all fitness values to arraylist
+//		for(Individual parent : population){
+//			fitnessValues.add(parent.fitness);
+//		}
+//
+////		Find the sum of the fitness values to get the inverse proportional values
+//		for(Double i : fitnessValues){
+//			fitnessSum += i;
+//		}
+//
+////		Calculate the inverse proportional values and replace each value in the arraylist
+//		for(int i = 0; i < fitnessValues.size(); i++){
+//			fitnessProportions.set(i, fitnessSum / fitnessValues.get(i));
+//		}
+//
+////		Calculate probabilites
+//		double probability = 0;
+//
+//		for(int i = 0; i < fitnessProportions.size(); i++){
+//			probability = fitnessProportions.get(i) / fitnessSum;
+//		}
+//
+//
+//		Individual parent1 = population.get(Parameters.random.nextInt(Parameters.popSize));
+//		Individual parent2 = population.get(Parameters.random.nextInt(Parameters.popSize));
+//
+//
+//		return parent1.copy();
+//
+//	}
 
 	/**
 	 * Crossover / Reproduction
@@ -159,6 +238,35 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		children.add(parent1.copy());
 		children.add(parent2.copy());
 		return children;
+	}
+
+//	One Point
+
+	private ArrayList<Individual> onePointCrossover(Individual parent1, Individual parent2) {
+		ArrayList<Individual> children = new ArrayList<>();
+
+		Individual child1 = new Individual();
+		Individual child2 = new Individual();
+
+		int crossPoint= Parameters.random.nextInt(parent1.chromosome.length);
+
+		for(int i = 0; i < parent1.chromosome.length; i++){
+			if(i < crossPoint){
+				child1.chromosome[i] = parent1.chromosome[i];
+				child2.chromosome[i] = parent2.chromosome[i];
+			}
+			else{
+				child1.chromosome[i] = parent2.chromosome[i];
+				child2.chromosome[i] = parent1.chromosome[i];
+			}
+		}
+
+
+		children.add(child1);
+		children.add(child2);
+		return children;
+
+
 	}
 
 //	Two point crossover
@@ -219,6 +327,14 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	 * (regardless of fitness)
 	 * 
 	 */
+
+//	Random replacement method
+	private void randReplace(ArrayList<Individual> individuals){
+		for(Individual individual : individuals){
+			int idx = Parameters.random.nextInt(population.size());
+			population.set(idx, individual);
+		}
+	}
 
 	private void replace(ArrayList<Individual> individuals) {
 		for(Individual individual : individuals) {
